@@ -1,0 +1,1 @@
+module.exports.SEED = '12345';
