@@ -60,8 +60,9 @@ app.post('/', mdAU.verificaToken, (req, res, next) => {
         apellidos: body.apellidos,
         email: body.email,
         password: bcrypt.hashSync(body.password, 10),
-        img: body.img,
-        role: body.role
+        //        img: body.img,
+        role: body.role,
+        google: body.google
     });
 
     usuario.save((err, usuarioGuardado) => {
