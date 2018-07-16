@@ -84,7 +84,7 @@ function buscarHospitales(cadena, regex) {
     });
 }
 
-function buscarMedicos(cadena, regex) {
+/* function buscarMedicos(cadena, regex) {
     return new Promise((resolve, reject) => {
         Medico.find({ nombre: regex }, (err, medicos) => {
             if (err) {
@@ -93,6 +93,23 @@ function buscarMedicos(cadena, regex) {
                 resolve(medicos);
             }
         });
+    });
+}
+ */
+function buscarMedicos(cadena, regex) {
+    return new Promise((resolve, reject) => {
+        Medico.find({})
+
+        .populate('hospital', 'nombre')
+            .populate('usuario', 'nombre')
+            .or([{ 'nombre': regex }, { 'hospital.nombre': regex }])
+            .exec((err, medicos) => {
+                if (err) {
+                    reject('Error al cargar médicos', err);
+                } else {
+                    resolve(medicos);
+                }
+            });
     });
 }
 

@@ -49,6 +49,34 @@ app.get('/', (req, res) => {
 
 });
 
+//--------------------------------------
+// Obtener Médico por ID
+//--------------------------------------
+app.get('/:id', (req, res) => {
+    var id = req.params.id;
+
+    Medico.findById(id)
+        .populate('usuario', 'nombre apellidos email')
+        .populate('hospital')
+        .exec((err, medico) => {
+            if (err) {
+                return res.status(500).json({
+                    status: 'error',
+                    code: 500,
+                    mensaje: 'Error al cargar médicos...',
+                    errors: err
+                });
+            } else {
+                return res.status(200).json({
+                    status: 'ok',
+                    code: 200,
+                    mensaje: 'Se ha recuperado el médico',
+                    medico: medico
+                });
+            }
+        });
+});
+
 //----------------------------------------
 // Crear un Médico
 //----------------------------------------
@@ -161,8 +189,7 @@ app.delete('/:id', mdAU.verificaToken, (req, res, next) => {
                 medico: medicoBorrado
             });
         }
-    })
-
+    });
 });
 
 

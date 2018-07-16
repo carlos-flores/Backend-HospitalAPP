@@ -12,6 +12,7 @@ var Usuario = require('../models/usuario');
 var mdAU = require('../middleware/autenticacion');
 
 
+
 //--------------------------------------
 // Obtener todos los usuarios
 //--------------------------------------
@@ -52,7 +53,7 @@ app.get('/', (req, res, next) => {
 //----------------------------------------
 // Crear un usuario
 //----------------------------------------
-app.post('/', mdAU.verificaToken, (req, res, next) => {
+app.post('/', (req, res, next) => {
     var body = req.body;
 
     var usuario = new Usuario({
@@ -92,7 +93,7 @@ app.post('/', mdAU.verificaToken, (req, res, next) => {
 //---------------------------------------------------
 //  Actualizar Usuario
 //---------------------------------------------------
-app.put('/:id', mdAU.verificaToken, (req, res) => {
+app.put('/:id', [mdAU.verificaToken, mdAU.verificaADMIN_o_MismoUsuario], (req, res) => {
     var id = req.params.id;
     var body = req.body;
 
@@ -115,7 +116,9 @@ app.put('/:id', mdAU.verificaToken, (req, res) => {
 
             usuario.nombre = body.nombre;
             usuario.apellidos = body.apellidos;
-            usuario.email = body.email;
+            if (!body.google) {
+                usuario.email = body.email;
+            }
             //usuario.password = bcrypt.hashSync(body.password, 10);
             usuario.img = body.img;
             usuario.role = body.role;
@@ -146,7 +149,7 @@ app.put('/:id', mdAU.verificaToken, (req, res) => {
 //--------------------------------------
 // Eliminar usuario
 //--------------------------------------
-app.delete('/:id', mdAU.verificaToken, (req, res) => {
+app.delete('/:id', [mdAU.verificaToken, mdAU.verificaADMIN_ROLE], (req, res) => {
     var id = req.params.id;
     Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
         if (err) {
